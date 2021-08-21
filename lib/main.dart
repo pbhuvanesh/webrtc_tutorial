@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -6,7 +5,6 @@ import 'package:webrtc_tutorial/signaling.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -68,69 +66,59 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         children: [
           SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () async {
-                  await [
-                    Permission.camera,
-                    Permission.microphone,
-                    Permission.bluetooth,
-                  ].request();
-                  signaling.openUserMedia(_localRenderer, _remoteRenderer);
-                },
-                child: Text("Open camera & microphone"),
-              ),
-              SizedBox(
-                width: 8,
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  setState(() {});
-                  currentUser = 'a';
-                },
-                child: Text("Login as A"),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  setState(() {});
-                  currentUser = 'a';
-                },
-                child: Text("Login as B"),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  roomId =
-                      await signaling.createRoom(_remoteRenderer, currentUser);
-                  textEditingController.text = roomId!;
-                  setState(() {});
-                },
-                child: Text("Call"),
-              ),
-              SizedBox(
-                width: 8,
-              ),
-              // ElevatedButton(
-              //   onPressed: () {
-              //     // Add roomId
-              //     signaling.joinRoom(
-              //       textEditingController.text,
-              //       _remoteRenderer,
-              //     );
-              //   },
-              //   child: Text("Join room"),
-              // ),
-              SizedBox(
-                width: 8,
-              ),
-              // ElevatedButton(
-              //   onPressed: () {
-              //     signaling.hangUp(_localRenderer);
-              //   },
-              //   child: Text("Hangup"),
-              // )
-            ],
+          ElevatedButton(
+            onPressed: () async {
+              await [
+                Permission.camera,
+                Permission.microphone,
+                Permission.bluetooth,
+              ].request();
+              signaling.openUserMedia(_localRenderer, _remoteRenderer);
+            },
+            child: Text("Open camera & microphone"),
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              setState(() {});
+              currentUser = 'a';
+              await signaling.authenticate(email: currentUser);
+            },
+            child: Text("Login as A"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              setState(() {});
+              currentUser = 'b';
+              await signaling.authenticate(email: currentUser);
+            },
+            child: Text("Login as B"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              roomId = await signaling.createRoom(_remoteRenderer, currentUser);
+              textEditingController.text = roomId!;
+              setState(() {});
+            },
+            child: Text("Call"),
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          // ElevatedButton(
+          //   onPressed: () {
+          //     // Add roomId
+          //     signaling.joinRoom(
+          //       textEditingController.text,
+          //       _remoteRenderer,
+          //     );
+          //   },
+          //   child: Text("Join room"),
+          // ),
+          SizedBox(
+            width: 8,
           ),
           SizedBox(height: 8),
           Expanded(
