@@ -31,8 +31,9 @@ class Signaling {
         deserializeFunction: (data) async {
           if (peerConnection?.getRemoteDescription() != null &&
               data['type'] != 'video-answer') {
+            print(data);
             var answer = RTCSessionDescription(
-              data['sdp'],
+              data?['sdp']?['sdp'],
               'answer',
             );
 
@@ -318,6 +319,16 @@ class Signaling {
       print("Add remote stream");
       onAddRemoteStream?.call(stream);
       remoteStream = stream;
+    };
+    bool negotiating = false;
+    peerConnection?.onRenegotiationNeeded = () {
+      try {
+        if (negotiating || peerConnection?.signalingState != "stable") return;
+        negotiating = true;
+        /* Your async/await-using code goes here */
+      } finally {
+        negotiating = false;
+      }
     };
   }
 }
